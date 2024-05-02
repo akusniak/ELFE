@@ -61,6 +61,11 @@ valgrind: debug
 	@echo "$(COLOUR_GREEN)Running Valgrind on $(NAME)...$(COLOUR_RESET)"
 	@valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(NAME) $(ARGS)
 
+# Rule to set ARGS and run valgrind
+ls:
+	$(MAKE) valgrind ARGS="/bin/ls -aelst --c-wizard"
+
+
 # Rule to clean up object files, outputting progress with color
 clean:
 	@echo "$(COLOUR_ORANGE)Cleaning up object files...$(COLOUR_RESET)"
@@ -75,4 +80,4 @@ fclean: clean
 re: fclean all
 
 # Special targets that do not correspond to actual files
-.PHONY: all clean fclean re debug valgrind
+.PHONY: all clean fclean re debug valgrind ls

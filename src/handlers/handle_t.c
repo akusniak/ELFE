@@ -20,7 +20,11 @@ void handle_t_option(const ElfData *elf_data) {
             perror("Failed to allocate memory for section name string table");
             return;
         }
-        lseek(elf_data->fd, shstrtab.sh_offset, SEEK_SET);
+        if (lseek(elf_data->fd, shstrtab.sh_offset, SEEK_SET ) == -1) {
+            perror("Failed to seek to section name string table");
+            free(section_name_strtab);
+            return;
+        }
         if (read(elf_data->fd, section_name_strtab, shstrtab.sh_size) != (ssize_t)shstrtab.sh_size) {
             perror("Failed to read section name string table");
             free(section_name_strtab);
@@ -33,7 +37,11 @@ void handle_t_option(const ElfData *elf_data) {
             perror("Failed to allocate memory for section name string table");
             return;
         }
-        lseek(elf_data->fd, shstrtab.sh_offset, SEEK_SET);
+        if (lseek(elf_data->fd, shstrtab.sh_offset, SEEK_SET) == -1) {
+            perror("Failed to seek to section name string table");
+            free(section_name_strtab);
+            return;
+        }
         if (read(elf_data->fd, section_name_strtab, shstrtab.sh_size) != (ssize_t)shstrtab.sh_size) {
             perror("Failed to read section name string table");
             free(section_name_strtab);
@@ -72,7 +80,7 @@ void print_string_table(int fd, void *shdr_generic, bool is_64) {
         return;
     }
 
-    if (lseek(fd, sh_offset, SEEK_SET) == -1 || read(fd, strtab, sh_size) != (ssize_t)sh_size) {
+    if (lseek(fd, sh_offset, SEEK_SET)  != sh_offset || read(fd, strtab, sh_size) != (ssize_t)sh_size) {
         perror("Failed to read string table section");
         free(strtab);
         return;
