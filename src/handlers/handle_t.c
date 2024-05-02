@@ -16,13 +16,29 @@ void handle_t_option(const ElfData *elf_data) {
     if (elf_data->is_64) {
         Elf64_Shdr shstrtab = elf_data->elf64_shdrs[elf_data->elf64_hdr->e_shstrndx];
         section_name_strtab = malloc(shstrtab.sh_size);
+        if (!section_name_strtab) {
+            perror("Failed to allocate memory for section name string table");
+            return;
+        }
         lseek(elf_data->fd, shstrtab.sh_offset, SEEK_SET);
-        read(elf_data->fd, section_name_strtab, shstrtab.sh_size);
+        if (read(elf_data->fd, section_name_strtab, shstrtab.sh_size) != (ssize_t)shstrtab.sh_size) {
+            perror("Failed to read section name string table");
+            free(section_name_strtab);
+            return;
+        }
     } else {
         Elf32_Shdr shstrtab = elf_data->elf32_shdrs[elf_data->elf32_hdr->e_shstrndx];
         section_name_strtab = malloc(shstrtab.sh_size);
+        if (!section_name_strtab) {
+            perror("Failed to allocate memory for section name string table");
+            return;
+        }
         lseek(elf_data->fd, shstrtab.sh_offset, SEEK_SET);
-        read(elf_data->fd, section_name_strtab, shstrtab.sh_size);
+        if (read(elf_data->fd, section_name_strtab, shstrtab.sh_size) != (ssize_t)shstrtab.sh_size) {
+            perror("Failed to read section name string table");
+            free(section_name_strtab);
+            return;
+        }
     }
 
     // Iterate over sections

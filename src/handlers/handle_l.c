@@ -9,6 +9,7 @@
  */
 void handle_l_option(const ElfData *elf_data)
 {
+    printf("**********************************\n");
     if (elf_data->is_64) {
         // If the ELF is 64-bit
         Elf64_Shdr *shdrs = elf_data->elf64_shdrs;

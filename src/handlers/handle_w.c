@@ -17,4 +17,5 @@ void handle_w_option(const ElfData *elf_data) {
     // Format the filesystem information
     printf("Filesystem Type: %lx, Block Size: %lu, Total Blocks: %lu, Free Blocks: %lu, Available Blocks: %lu\n",
              fs_stats.f_type, fs_stats.f_bsize, fs_stats.f_blocks, fs_stats.f_bfree, fs_stats.f_bavail);
+    printf("**********************************\n");
 }
