@@ -22,5 +22,5 @@ void handle_s_option(ElfData *elf_data)
     }
 
     // Print the number of sections
-    printf("Number of sections in the ELF file: %d", section_count);
+    printf("Number of sections in the ELF file: %d\n", section_count);
 }

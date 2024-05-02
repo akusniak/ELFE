@@ -1,5 +1,7 @@
 #include "../../includes/elfe.h"
 
+void print_string_table(int fd, void *shdr_generic, bool is_64);
+
 /**
  * Function to handle the 't' option, which prints section names and their associated string tables.
  * This function iterates over the sections, identifies string table sections, and prints their content.
