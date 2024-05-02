@@ -1,5 +1,11 @@
 #include "../../includes/elfe.h"
 
+/**
+ * Function to handle the 'd' option, which displays the content of the .text section in hexadecimal.
+ * This function reads and prints the content of the .text section in the ELF file in hexadecimal format.
+ *
+ * @param elf_data Pointer to the ElfData structure containing ELF file information.
+ */
 void handle_d_option(ElfData *elf_data) {
     if (!elf_data) {
         fprintf(stderr, "Error: ELF data is NULL.\n");
@@ -30,7 +36,7 @@ void handle_d_option(ElfData *elf_data) {
     for (int i = 0; i < num_sections; i++) {
         uint32_t sh_type = elf_data->is_64 ? ((Elf64_Shdr *)elf_data->elf64_shdrs)[i].sh_type : ((Elf32_Shdr *)elf_data->elf32_shdrs)[i].sh_type;
         if (sh_type == SHT_PROGBITS) {
-            const char *name = sh_str + (elf_data->is_64 ? ((Elf64_Shdr *)elf_data->elf32_shdrs)[i].sh_name : ((Elf32_Shdr *)elf_data->elf32_shdrs)[i].sh_name);
+            const char *name = sh_str + (elf_data->is_64 ? ((Elf64_Shdr *)elf_data->elf64_shdrs)[i].sh_name : ((Elf32_Shdr *)elf_data->elf32_shdrs)[i].sh_name);
             if (!strcmp(name, ".text")) {
                 printf("**********************************\n");
                 off_t sh_offset = elf_data->is_64 ? ((Elf64_Shdr *)elf_data->elf64_shdrs)[i].sh_offset : ((Elf32_Shdr *)elf_data->elf32_shdrs)[i].sh_offset;

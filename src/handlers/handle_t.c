@@ -1,7 +1,11 @@
 #include "../../includes/elfe.h"
 
-void print_string_table(int fd, void *shdr_generic, bool is_64);
-
+/**
+ * Function to handle the 't' option, which prints section names and their associated string tables.
+ * This function iterates over the sections, identifies string table sections, and prints their content.
+ *
+ * @param elf_data Pointer to the ElfData structure containing ELF file information.
+ */
 void handle_t_option(const ElfData *elf_data) {
     printf("**********************************\n");
     char *section_name_strtab = NULL;
@@ -33,12 +37,18 @@ void handle_t_option(const ElfData *elf_data) {
     free(section_name_strtab);
 }
 
-
+/**
+ * Function to print the content of a string table section.
+ *
+ * @param fd File descriptor of the ELF file.
+ * @param shdr_generic Pointer to the section header structure.
+ * @param is_64 Boolean indicating if the ELF is 64-bit.
+ */
 void print_string_table(int fd, void *shdr_generic, bool is_64) {
     size_t sh_size = is_64 ? ((Elf64_Shdr *)shdr_generic)->sh_size : ((Elf32_Shdr *)shdr_generic)->sh_size;
     off_t sh_offset = is_64 ? ((Elf64_Shdr *)shdr_generic)->sh_offset : ((Elf32_Shdr *)shdr_generic)->sh_offset;
 
-    char *strtab = malloc(sh_size + 1); // Ajout d'un byte pour le caractère nul de sécurité
+    char *strtab = malloc(sh_size + 1); // Adding an extra byte for null character for safety
     if (!strtab) {
         perror("Failed to allocate memory for string table");
         return;
@@ -50,25 +60,25 @@ void print_string_table(int fd, void *shdr_generic, bool is_64) {
         return;
     }
 
-    strtab[sh_size] = '\0'; // S'assurer que le dernier caractère est nul
+    strtab[sh_size] = '\0'; // Ensure the last character is null terminated
 
     char *current_str = strtab;
     while (current_str < strtab + sh_size) {
         if (*current_str) {
             char *next_str = current_str;
-            // Trouver la fin de la chaîne actuelle sans dépasser les limites
+            // Find the end of the current string without going beyond the boundaries
             while (next_str < strtab + sh_size && *next_str) {
                 next_str++;
             }
 
-            if (next_str < strtab + sh_size) { // Assurez-vous que nous sommes toujours dans les limites
+            if (next_str < strtab + sh_size) { // Make sure we are still within bounds
                 printf("%s\n", current_str);
                 current_str = next_str + 1;
             } else {
-                break; // Si nous sommes à la fin, arrêtons la boucle
+                break; // If we're at the end, stop the loop
             }
         } else {
-            current_str++; // Gérer les caractères nuls consécutifs
+            current_str++; // Handle consecutive null characters
         }
     }
 

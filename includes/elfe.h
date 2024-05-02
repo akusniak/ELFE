@@ -1,77 +1,68 @@
-#ifndef RELF_H
-# define RELF_H
+#ifndef ELFE_H
+#define ELFE_H
 
-// include the necessary headers
-# include <unistd.h> // for getopt
-# include <stdio.h> // for printf
-# include <stdlib.h> // for return values
+// Include necessary standard library headers
+#include <unistd.h>      // For POSIX APIs like getopt
+#include <stdio.h>       // For I/O operations
+#include <stdlib.h>      // For general utilities like malloc
+#include <getopt.h>      // For getopt_long function to parse command-line options
+#include <sys/vfs.h>     // For filesystem statistics
+#include <sys/types.h>   // For data types
+#include <fcntl.h>       // For file control options
+#include <sys/stat.h>    // For stat functions
+#include <sys/mman.h>    // For memory management declarations
+#include <elf.h>         // For ELF format definitions
+#include <string.h>      // For string operations
+#include <stdbool.h>     // For boolean type
+#include <pwd.h>         // For password structure
+#include <sys/statvfs.h> // For filesystem statistics
 
-#include <getopt.h> // for getopt long options
-#include <sys/vfs.h>    // Header for statfs
+// Define return values for ELF detection
+#define ELF_DETECTED 1
+#define NOT_AN_ELF 0
 
-#include <sys/types.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/mman.h>
-#include <elf.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/statvfs.h>
-#include <string.h>
+// Define error codes for file operations
+#define FAILED_OPEN 0
+#define FAILED_READ 0
 
-#include <stdbool.h>
-#include <pwd.h>
-#include <sys/types.h>
+// Define constants for system architecture types
+#define SYS_32 ELFCLASS32
+#define SYS_64 ELFCLASS64
 
-// define the return values
-# define ELF_DETECTED 1
-# define NOT_AN_ELF 0
+// Define initialization statuses
+#define FAILED_INIT -1
+#define SUCCESS_INIT 0
 
-# define FAILED_OPEN 0
-# define FAILED_READ 0
-
-# define SYS_32 ELFCLASS32
-# define SYS_64 ELFCLASS64
-
-# define FAILED_INIT -1
-# define SUCCESS_INIT 0
-
+// Structure to hold linked list of information nodes
 typedef struct InfoNode {
     char *info;
     struct InfoNode *next;
-}   InfoNode;
+} InfoNode;
 
-
+// Structure to manage ELF data within the program
 typedef struct ElfData {
-    int             fd;                 // File descriptor for the ELF file
-    bool            is_64; // structure pour les headers
-    char            *file_path;
+    int fd;              // File descriptor for the ELF file
+    bool is_64;          // True if ELF is 64-bit, false if 32-bit
+    char *file_path;     // Path to the ELF file
     union {
-        Elf32_Ehdr  *elf32_hdr;        // Pointeur vers l'en-tête ELF 32 bits
-        Elf64_Ehdr  *elf64_hdr;        // Pointeur vers l'en-tête ELF 64 bits
+        Elf32_Ehdr *elf32_hdr;  // Pointer to the ELF 32-bit header
+        Elf64_Ehdr *elf64_hdr;  // Pointer to the ELF 64-bit header
     };
     union {
-        Elf32_Shdr  *elf32_shdrs;      // Pointeur vers les en-têtes de section ELF 32 bits
-        Elf64_Shdr  *elf64_shdrs;      // Pointeur vers les en-têtes de section ELF 64 bits
+        Elf32_Shdr *elf32_shdrs;  // Pointer to the ELF 32-bit section headers
+        Elf64_Shdr *elf64_shdrs;  // Pointer to the ELF 64-bit section headers
     };
-}   ElfData;
+} ElfData;
 
-
-
-/* Utilities */
-
-void    have_you_seen_my_elf();
+/* Utility functions */
+void have_you_seen_my_elf();
 void cleanup_elf_data(ElfData *elf_data);
 
-
-/* Init */
-
+/* Initialization function */
 int init_elf_data(const char *filename, ElfData *elf_data);
 
-
-/* Handlers */
-
-void    help(void);
+/* Command handlers */
+void help(void);
 void handle_basic(ElfData *elf_data);
 void handle_a_option(ElfData *elf_data);
 void handle_d_option(ElfData *elf_data);
@@ -81,4 +72,4 @@ void handle_s_option(ElfData *elf_data);
 void handle_t_option(const ElfData *elf_data);
 void handle_w_option(const ElfData *elf_data);
 
-#endif
+#endif // ELFE_H

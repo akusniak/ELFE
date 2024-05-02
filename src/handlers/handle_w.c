@@ -1,7 +1,11 @@
 #include "../../includes/elfe.h"
 
-void handle_w_option(const ElfData *elf_data)
-{
+/**
+ * Function to handle the 'w' option, which prints filesystem statistics of the ELF file.
+ *
+ * @param elf_data Pointer to the ElfData structure containing ELF file information.
+ */
+void handle_w_option(const ElfData *elf_data) {
     struct statfs fs_stats;
     
     printf("**********************************\n");

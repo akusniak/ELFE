@@ -1,7 +1,9 @@
 #include "../../includes/elfe.h"
 
-void    help(void)
-{
+/**
+ * Function to display the help message with usage instructions and options.
+ */
+void help(void) {
     printf("Usage: ./elfe <file> [-dsaetl] [--c-wizard]\n");
     printf("Options:\n");
     printf("  -d: Display the dynamic section\n");
