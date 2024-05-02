@@ -9,27 +9,22 @@
  */
 void handle_basic(ElfData *elf_data) {
     struct stat fileStat;
-    // Get file statistics
     if (stat(elf_data->file_path, &fileStat) < 0) {
         perror("Failed to get file stats");
         return;
     }
 
-    struct passwd pwd;
-    struct passwd *result;
-    char *buf;
-    size_t bufsize;
-    bufsize = sysconf(_SC_GETPW_R_SIZE_MAX);
-    if ((int)bufsize == -1) {
-        bufsize = 16384;
-    }
+    // Allocate buffer for username retrieval
+    size_t bufsize = sysconf(_SC_GETPW_R_SIZE_MAX);
+    if (bufsize == (size_t)-1) bufsize = 16384;  // Use a large default size if sysconf failed
 
-    buf = malloc(bufsize);
-    if (buf == NULL) {
+    char *buf = malloc(bufsize);
+    if (!buf) {
         perror("Malloc failed");
         return;
     }
 
+    struct passwd pwd, *result;
     if (getpwuid_r(fileStat.st_uid, &pwd, buf, bufsize, &result) != 0 || result == NULL) {
         perror("Failed to get username");
         free(buf);
@@ -43,7 +38,7 @@ void handle_basic(ElfData *elf_data) {
     printf("Owner uid: %d, Name: %s\n", fileStat.st_uid, pwd.pw_name);
     printf("Permissions: %o (octal)\n", fileStat.st_mode & 0777);
     printf("Allocated blocks: %ld\n", fileStat.st_blocks);
-    printf("Size of each block: %ld bytes\n", fileStat.st_blksize);
+    printf("Block size: %ld bytes\n", fileStat.st_blksize);
     printf("Inode number: %ld\n", fileStat.st_ino);
     printf("*********************************\n");
 
